@@ -11,14 +11,14 @@ registros de precipitación del IDEAM.
 
 | # | Pregunta | Gráfico |
 |---|----------|---------|
-| P1 | ¿Cómo varía la precipitación mes a mes y cuáles son los meses con mayor y menor acumulado? | Lluvia por mes y temporada |
-| P2 | ¿Qué municipios registran la mayor precipitación acumulada y qué porcentaje del total representan? | Municipios con mayor acumulado · Mapa de estaciones |
-| P3 | ¿En qué franja horaria es más frecuente la lluvia? | % de registros con lluvia por franja |
-| P4 | ¿Qué tan correlacionada está la lluvia diaria entre las principales estaciones? | Correlación de la lluvia diaria |
-| P5 | ¿Cuánto difiere la precipitación entre la temporada lluviosa y la seca? | Lluvia diaria por temporada |
+| P1 | ¿Cómo varía la precipitación mes a mes y cuáles son los meses con mayor y menor acumulado? | Pestaña P1 · Meses |
+| P2 | ¿Qué municipios registran la mayor precipitación acumulada y qué porcentaje del total representan? | Pestaña P2 · Municipios y mapa |
+| P3 | ¿En qué franja horaria es más frecuente la lluvia? | Pestaña P3 · Franjas |
+| P4 | ¿Qué tan correlacionada está la lluvia diaria entre las principales estaciones? | Pestaña P4 · Correlación (Pearson y Spearman) |
+| P5 | ¿Cuánto difiere la precipitación entre la temporada lluviosa y la seca? | Pestaña P5 · Temporadas y zonas |
 
-**KPI:** registros analizados, lluvia acumulada, porcentaje de días-estación con lluvia y municipio con mayor acumulado.
-**Filtros:** municipio, rango de meses y exclusión de la estación PISBA.
+**KPI:** estaciones, días-estación con datos, lluvia promedio por día y porcentaje de días-estación con lluvia.
+**Filtros:** municipio, zona hidrográfica, rango de meses y exclusión de las estaciones en observación.
 
 ## Estructura
 
@@ -28,10 +28,12 @@ dashboard/
 ├── .streamlit/config.toml      # tema claro
 ├── data/
 │   └── oro/                    # tablas agregadas que lee el dashboard
-│       ├── oro_mensual.csv     # lluvia por municipio, año y mes
-│       ├── oro_franja.csv      # registros con lluvia por franja horaria
-│       ├── oro_estaciones.csv  # acumulado y coordenadas por estación
-│       └── oro_diario.csv      # lluvia diaria por estación
+│       ├── oro_mensual.csv          # lluvia por municipio y mes
+│       ├── oro_franja.csv           # registros con lluvia por franja horaria
+│       ├── oro_franja_estacion.csv  # lo mismo, por estación
+│       ├── oro_estaciones.csv       # acumulado, días con datos y ubicación por estación
+│       ├── oro_diario.csv           # lluvia diaria por estación
+│       └── oro_zona.csv             # lluvia por zona hidrográfica y mes
 ├── pyproject.toml · uv.lock    # dependencias (uv)
 └── requirements.txt            # dependencias (pip / Streamlit Community Cloud)
 ```
@@ -66,12 +68,14 @@ El dashboard se abre en <http://localhost:8501>.
   Portal de Datos Abiertos de Colombia: <https://www.datos.gov.co/Ambiente-y-Desarrollo-Sostenible/Precipitaci-n/s54a-sgyg>
 - **Licencia:** Creative Commons Atribución-CompartirIgual 4.0 Internacional (CC BY-SA 4.0).
 - **Filtro:** departamento de Boyacá, 1 de enero a 31 de diciembre de 2025. Descargado el 4 de noviembre de 2026.
-- **Volumen:** 2.311.516 registros en bronce; 2.118.725 en plata, tras eliminar 192.791 duplicados.
+- **Volumen:** 2.311.516 registros en bronce; 1.870.095 en plata, tras la limpieza.
 - **Datos personales:** no contiene; son mediciones de estaciones meteorológicas.
 
-> **Estación PISBA (código 0035215030).** Su sensor registra 118.535 mm en 2025, el 68,8 % de toda la lluvia del
-> departamento, con valores repetidos y días de más de 4.000 mm. Es una falla de sensor, por lo que el dashboard la
-> excluye por defecto. El interruptor de la barra lateral permite incluirla para comparar.
+> **Limpieza.** Se eliminaron 192.791 duplicados, 238.965 registros de un segundo sensor, 9.561 de meses imposibles de
+> PISBA (enero a septiembre, probable falla del sensor) y 104 de un sensor pegado en Pesca.
+>
+> **Estaciones en observación.** Llano Alarcón y Hato Laguna marcan 8,8 y 6,5 veces lo de sus vecinas. Puede ser un error
+> de escala sin confirmar: se conservan, y un interruptor permite excluirlas para comparar.
 
 Los datos del IDEAM son crudos y no están validados por la entidad; los resultados son exploratorios.
 
